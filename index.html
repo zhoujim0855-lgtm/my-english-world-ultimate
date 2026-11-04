@@ -146,6 +146,13 @@
   <button class="primary" onclick="stopRecording()">⏹ 停止录音</button>
   <button class="primary" onclick="playRecording()">▶ 播放录音</button>
   <p id="recordStatus">Let's practice speaking English!</p>
+  <div id="speechResult" style="margin-top:12px;padding:15px;background:#ffffff20;border-radius:15px;">
+  Your English words will appear here!
+</div>
+
+<button class="primary" onclick="startSpeechRecognition()">
+  🗣️ 识别我的英语
+</button>
 </div>
         </div>
       </div>
@@ -349,6 +356,54 @@ function playRecording() {
 
   const audio = new Audio(recordedAudioUrl);
   audio.play();
+}
+let speechRecognition;
+
+function startSpeechRecognition() {
+  const SpeechAPI =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  const resultBox = document.getElementById("speechResult");
+
+  if (!SpeechAPI) {
+    resultBox.textContent =
+      "Your browser does not support speech recognition. Please try another browser.";
+    return;
+  }
+
+  speechRecognition = new SpeechAPI();
+
+  speechRecognition.lang = "en-US";
+  speechRecognition.continuous = false;
+  speechRecognition.interimResults = false;
+
+  resultBox.textContent = "🎤 Listening... Speak English now!";
+
+  speechRecognition.onresult = function(event) {
+    const words = event.results[0][0].transcript;
+
+    resultBox.textContent = "You said: " + words;
+
+    speak("Excellent! I heard you say: " + words);
+  };
+
+  speechRecognition.onerror = function(event) {
+    resultBox.textContent =
+      "Recognition error: " + event.error +
+      ". Please check microphone permission and try again.";
+  };
+
+  speechRecognition.onend = function() {
+    console.log("Speech recognition ended.");
+  };
+
+  try {
+    speechRecognition.start();
+  } catch (error) {
+    resultBox.textContent =
+      "Please wait a moment and try again.";
+  }
 }
 </script>
 <script src="game.js"></script>
