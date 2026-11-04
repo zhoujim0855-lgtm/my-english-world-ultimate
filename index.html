@@ -141,6 +141,12 @@
           <button class="fox" onclick="speak('Hello, friend! I am Foxy! Welcome to my world!')" style="border:0;background:transparent;cursor:pointer;">🦊</button>
           <div class="fox-name">Foxy · 你的英语伙伴</div>
           <div class="speech" id="foxSpeech">Hello, friend! Let's explore!</div>
+          <div style="margin-top:15px;">
+  <button class="primary" onclick="startRecording()">🎤 开始录音</button>
+  <button class="primary" onclick="stopRecording()">⏹ 停止录音</button>
+  <button class="primary" onclick="playRecording()">▶ 播放录音</button>
+  <p id="recordStatus">Let's practice speaking English!</p>
+</div>
         </div>
       </div>
     </section>
@@ -276,6 +282,74 @@
       window.speechSynthesis.speak(utterance);
     }
   }
+let mediaRecorder;
+let audioChunks = [];
+let recordedAudioUrl = null;
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true
+    });
+
+    audioChunks = [];
+
+    const mimeType = ["audio/mp4", "audio/webm"]
+      .find(type => MediaRecorder.isTypeSupported(type));
+
+    mediaRecorder = mimeType
+      ? new MediaRecorder(stream, { mimeType })
+      : new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = event => {
+      if (event.data.size > 0) {
+        audioChunks.push(event.data);
+      }
+    };
+
+    mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(audioChunks, {
+        type: mediaRecorder.mimeType
+      });
+
+      if (recordedAudioUrl) {
+        URL.revokeObjectURL(recordedAudioUrl);
+      }
+
+      recordedAudioUrl = URL.createObjectURL(audioBlob);
+
+      stream.getTracks().forEach(track => track.stop());
+
+      document.getElementById("recordStatus").textContent =
+        "Recording complete! Tap Play to listen.";
+    };
+
+    mediaRecorder.start();
+
+    document.getElementById("recordStatus").textContent =
+      "🔴 Recording... Speak English now!";
+  } catch (error) {
+    document.getElementById("recordStatus").textContent =
+      "Please allow microphone access and try again.";
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    mediaRecorder.stop();
+  }
+}
+
+function playRecording() {
+  if (!recordedAudioUrl) {
+    document.getElementById("recordStatus").textContent =
+      "Please record your voice first!";
+    return;
+  }
+
+  const audio = new Audio(recordedAudioUrl);
+  audio.play();
+}
 </script>
 <script src="game.js"></script>
 </body>
