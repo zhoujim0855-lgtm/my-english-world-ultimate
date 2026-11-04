@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101a3c" />
+  <meta name="description" content="My English World - An Adventure to Speak English!" />
+  <title>My English World | 英语冒险世界</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #fff;
+      background: #101a3c;
+    }
+    button { font: inherit; cursor: pointer; }
+    .app {
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 80% 10%, #5267a8 0, transparent 30%),
+        linear-gradient(150deg, #101a3c, #253b70 60%, #17264b);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 5%;
+      gap: 12px;
+      border-bottom: 1px solid #ffffff20;
+    }
+    .logo { font-size: 21px; font-weight: 900; }
+    .logo span { color: #ffd66b; }
+    .stats { display: flex; gap: 10px; flex-wrap: wrap; }
+    .stat {
+      background: #ffffff18;
+      border: 1px solid #ffffff25;
+      border-radius: 30px;
+      padding: 8px 13px;
+      font-size: 13px;
+    }
+    main { max-width: 1100px; margin: auto; padding: 30px 20px 60px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 25px;
+      align-items: center;
+      min-height: 330px;
+    }
+    .eyebrow { color: #ffd66b; font-weight: 800; letter-spacing: 2px; }
+    h1 { font-size: clamp(34px, 6vw, 62px); line-height: 1.1; margin: 14px 0; }
+    .intro { color: #d9e4ff; font-size: 17px; line-height: 1.7; }
+    .primary {
+      border: 0; border-radius: 30px; padding: 15px 25px;
+      color: #26345e; background: linear-gradient(100deg,#ffe17d,#ffb94e);
+      font-weight: 900; box-shadow: 0 8px 25px #0004;
+    }
+    .primary:active { transform: scale(.97); }
+    .fox-scene {
+      min-height: 270px; border-radius: 30px;
+      display: grid; place-items: center; text-align: center;
+      background: linear-gradient(160deg,#83c8ff,#8c9eff 55%,#b5a5ff);
+      box-shadow: 0 20px 50px #0004;
+      position: relative; overflow: hidden;
+    }
+    .fox { font-size: 115px; filter: drop-shadow(0 15px 8px #25345a55); }
+    .fox-name { color: #24335e; font-size: 22px; font-weight: 900; }
+    .speech {
+      background: white; color: #24335e; padding: 12px 18px;
+      border-radius: 18px; margin: 8px 15px; font-weight: 700;
+    }
+    h2 { margin-top: 42px; font-size: 27px; }
+    .worlds {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+    }
+    .world {
+      border: 1px solid #ffffff25; border-radius: 22px;
+      padding: 20px; background: #ffffff12;
+      transition: .2s;
+    }
+    .world:hover { transform: translateY(-4px); background: #ffffff20; }
+    .world-icon { font-size: 43px; }
+    .world h3 { margin: 10px 0 5px; }
+    .world p { color: #d3ddf6; font-size: 14px; line-height: 1.5; }
+    .world button {
+      border: 0; border-radius: 20px; padding: 9px 15px;
+      background: #ffffff; color: #27365e; font-weight: 800;
+    }
+    .mission {
+      margin-top: 25px; padding: 22px; border-radius: 22px;
+      background: linear-gradient(110deg,#5b70b9,#735fb4);
+    }
+    .mission p { color: #e5e9ff; }
+    .panel {
+      display: none; margin-top: 25px; padding: 24px;
+      border-radius: 22px; background: #ffffff16;
+      border: 1px solid #ffffff30;
+    }
+    .panel.active { display: block; }
+    .answer {
+      display: block; width: 100%; text-align: left;
+      margin: 10px 0; padding: 14px; border: 1px solid #ffffff40;
+      border-radius: 14px; background: #ffffff15; color: white;
+    }
+    .answer:hover { background: #ffffff30; }
+    .message { color: #ffe17d; font-weight: 800; min-height: 25px; }
+    footer { text-align: center; color: #b9c6e7; padding: 25px; font-size: 13px; }
+    @media(max-width:700px) {
+      .hero { grid-template-columns: 1fr; }
+      .fox-scene { min-height: 220px; }
+      .worlds { grid-template-columns: 1fr; }
+      header { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">🌍 MY <span>ENGLISH</span> WORLD</div>
+    <div class="stats">
+      <div class="stat">⭐ EXP <b id="exp">0</b></div>
+      <div class="stat">🪙 Coins <b id="coins">0</b></div>
+      <div class="stat">🏆 Level <b id="level">1</b></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">YOUR ENGLISH ADVENTURE STARTS HERE</div>
+        <h1>Learn English.<br>Explore the World!</h1>
+        <p class="intro">
+          欢迎来到 My English World！和 Foxy 一起探索神奇世界，
+          完成任务、结交朋友，用英语开启冒险！
+        </p>
+        <button class="primary" onclick="startAdventure()">🚀 开始冒险</button>
+      </div>
+      <div class="fox-scene">
+        <div>
+          <div class="fox">🦊</div>
+          <div class="fox-name">Foxy · 你的英语伙伴</div>
+          <div class="speech" id="foxSpeech">Hello, friend! Let's explore!</div>
+        </div>
+      </div>
+    </section>
+
+    <h2>🗺️ Explore Your World</h2>
+    <section class="worlds">
+      <article class="world">
+        <div class="world-icon">🌳</div>
+        <h3>Magic Forest</h3>
+        <p>在魔法森林认识动物，学习日常英语。</p>
+        <button onclick="openLesson('forest')">进入森林 →</button>
+      </article>
+      <article class="world">
+        <div class="world-icon">🏰</div>
+        <h3>Royal Castle</h3>
+        <p>探索城堡，学习问候、介绍和交流。</p>
+        <button onclick="openLesson('castle')">进入城堡 →</button>
+      </article>
+      <article class="world">
+        <div class="world-icon">🌊</div>
+        <h3>Ocean World</h3>
+        <p>潜入海底，认识海洋动物和神秘宝藏。</p>
+        <button onclick="openLesson('ocean')">进入海洋 →</button>
+      </article>
+    </section>
+
+    <section class="mission">
+      <h2 style="margin-top:0">🎯 Today's Mission</h2>
+      <p>今天的挑战：学会用英语介绍自己！</p>
+      <button class="primary" onclick="openLesson('intro')">接受任务</button>
+    </section>
+
+    <section class="panel" id="lesson">
+      <h2 id="lessonTitle">Foxy's Challenge</h2>
+      <p id="question">Choose the correct answer:</p>
+      <div id="answers"></div>
+      <p class="message" id="feedback"></p>
+      <button class="primary" onclick="closeLesson()">返回冒险地图</button>
+    </section>
+  </main>
+
+  <footer>MY ENGLISH WORLD · A WORLD OF ADVENTURE & LEARNING</footer>
+</div>
+
+<script>
+  let exp = 0;
+  let coins = 0;
+
+  const lessons = {
+    forest: {
+      title: "🌳 Magic Forest",
+      question: "Foxy sees a cat. What should he say?",
+      answers: ["It is a cat.", "I am a banana.", "Good night!"],
+      correct: 0
+    },
+    castle: {
+      title: "🏰 Royal Castle",
+      question: "How do you greet a new friend?",
+      answers: ["Goodbye!", "Hello! Nice to meet you!", "I am sleeping."],
+      correct: 1
+    },
+    ocean: {
+      title: "🌊 Ocean World",
+      question: "What is this? 🐬",
+      answers: ["A dolphin", "A tiger", "An apple"],
+      correct: 0
+    },
+    intro: {
+      title: "🎯 Introduce Yourself",
+      question: "How do you say '我叫 Tom'?",
+      answers: ["My name is Tom.", "I like Tom.", "Where is Tom?"],
+      correct: 0
+    }
+  };
+
+  function updateStats() {
+    document.getElementById("exp").textContent = exp;
+    document.getElementById("coins").textContent = coins;
+    document.getElementById("level").textContent = Math.floor(exp / 50) + 1;
+  }
+
+  function startAdventure() {
+    document.getElementById("foxSpeech").textContent =
+      "Welcome, adventurer! Choose a world and let's play!";
+    speak("Welcome, adventurer! Choose a world and let's play!");
+    document.getElementById("lesson").scrollIntoView({behavior:"smooth"});
+  }
+
+  function openLesson(name) {
+    const lesson = lessons[name];
+    document.getElementById("lessonTitle").textContent = lesson.title;
+    document.getElementById("question").textContent = lesson.question;
+    document.getElementById("feedback").textContent = "";
+    const container = document.getElementById("answers");
+    container.innerHTML = "";
+    lesson.answers.forEach((answer, index) => {
+      const button = document.createElement("button");
+      button.className = "answer";
+      button.textContent = answer;
+      button.onclick = () => checkAnswer(index, lesson.correct, answer);
+      container.appendChild(button);
+    });
+    document.getElementById("lesson").classList.add("active");
+    document.getElementById("lesson").scrollIntoView({behavior:"smooth"});
+    document.getElementById("foxSpeech").textContent = "You can do it!";
+  }
+
+  function checkAnswer(selected, correct, answer) {
+    const feedback = document.getElementById("feedback");
+    if (selected === correct) {
+      exp += 10;
+      coins += 5;
+      updateStats();
+      feedback.textContent = "🎉 Excellent! You did it! +10 EXP +5 Coins";
+      speak("Excellent! You did it! " + answer);
+      document.getElementById("foxSpeech").textContent = "Amazing! I'm proud of you!";
+    } else {
+      feedback.textContent = "💪 Try again! You can do it!";
+      speak("Try again! You can do it!");
+    }
+  }
+
+  function closeLesson() {
+    document.getElementById("lesson").classList.remove("active");
+  }
+
+  function speak(text) {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = 0.88;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+</script>
+</body>
+</html>
